@@ -1,8 +1,28 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import Square from "./Square";
 
-export default function Board({ squares, isXNext, onPlay, winner }) {
+export default function Board({
+  squares,
+  isXNext,
+  onPlay,
+  winner,
+  isPlayWithBot,
+}) {
   let status;
+
+  useEffect(() => {
+    if (!isXNext && isPlayWithBot) {
+      const emptySquares = squares
+        .map((square, index) => {
+          return square === null ? index : null;
+        })
+        .filter((index) => index !== null);
+      const randomIndex = Math.floor(Math.random() * emptySquares.length);
+      const nextSquares = [...squares];
+      nextSquares[emptySquares[randomIndex]] = "0";
+      onPlay(nextSquares);
+    }
+  }, [isXNext]);
 
   const handleClick = (index) => {
     if (squares[index] || winner) {
